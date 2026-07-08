@@ -1,0 +1,71 @@
+---
+title: "Installing and Using Software on Hazel"
+author: "Jeff Doser"
+format: 
+  html:
+    embed-resources: true
+editor: source
+---
+
+Installing and using software that is not directly maintained by the NC State IT team on Hazel can be quite difficult. In this document I outline the approaches that you should take in order to leverage software that someone else in the lab has already installed (this includes R packages), as well as when you need to install something new yourself (again including R packages). 
+
+The **main takeaway** from this document is that all software that the SEFS Lab uses on Hazel should be stored in a single directory: `/usr/local/usrapps/doserlab/jwdoser`. By default, when you try to install an R package on the HPC it will go into your HOME directory. The HOME directory quickly fills up, and so it is not a sustainable approach. By installing in `/usr/local/usrapps/doserlab/jwdoser`, we will all be able to use software that other members have downloaded, which can save us a lot of trouble in the long run. 
+
+Note that much of this comes from the [NC State IT instructions](https://hpc.ncsu.edu/Software/install_faq.php) for installing external software. Claude also gave some very useful help in figuring out how this works. 
+
+## Setting up your environment
+
+The first step to do is to change your default settings on the HPC on where R packages will be installed. This is accomplished by editing the `.Renviron` file in your home directory (which may not exist). This is a file that contains specific instructions for R that override the defaults that R will use. We will explicitly tell R the location of the directory where we want to install R packages, and where we want to load pre-installed packages. This is accomplished by adding in the following two lines into the `.Renviron` file: 
+
+```{bash}
+#| eval: false
+R_LIBS_USER="/usr/local/usrapps/doserlab/jwdoser/R_Packages/"
+```
+
+The first line is what tells R where to find existing packages and where to install new ones to.  
+Copy the above line into your clipboard. On the HPC, type `cd` to return to your home directory. Then run `vim .Renviron`. If a blank file shows up, great. If there is already something in the file, great. `vim` is a texteditor with specific commands for inputting text. Neither the cursor nor the mouse will work as you expect them to. Hit the `j` key on your keyboard until you are at the bottom of the file. You can tell this by noting the line where the white blinking cursor is. Once you are at the last line, hit `o`, which should start a new line. Paste the text into the file by hitting `Ctrl + shift + v`. You should see the line of text show up. At this point, you need to save the file, which is done by hitting `Esc`, `:w`, then `Enter`. To exit the text editing window, do `:q` then `Enter`. Now you should be back in the terminal as usual.   
+
+Now you will do the same process, but you will be adding in the following line into the `.bashrc` file that exists in your home directory: 
+
+```{bash}
+#| eval: false
+export LD_LIBRARY_PATH=/usr/local/usrapps/doserlab/jwdoser/lib:/usr/local/usrapps/doserlab/jwdoser/env_conda_spatial/lib:$LD_LIBRARY_PATH
+```
+
+This is necessary to specify where software (like R) needs to look in order to find *shared libraries*. Shared libraries are precompiled code that can be used downstream by other software and applications to perform certain tasks. When an R package relies on some software package, it is much more efficient for it to reference (or *link* to) a pre-existing version of that code as opposed to trying to copy everything over into that software package. Otherwise, every software package we used would be substantially larger. So, all that said, we will store all of our shared libraries in the paths specified in the above line of code. The `.bashrc` file is a bash script that will automatically be executed any time you open a terminal window (i.e., log onto the HPC). So, the HPC will always know where you want to look for shared libraries when loading packages in R or doing something else that requires them. Note that there is a good chance this changes over time. As lab members install and require new software, this may need to be changed to reflect new locations of where such software is installed (particularly if it is installed via conda). 
+
+Assuming that all went well, the following test should work. Do the following: 
+
+```{bash}
+#| eval: false
+module load cmake
+module load openmpi-gcc
+module load R 
+```
+
+Then run the following simple test in R: 
+
+```{r}
+#| eval: false
+library(sf)
+library(rFIA)
+biomass(fiaRI)
+biomass(fiaRI, polys = countiesRI, returnSpatial = TRUE)
+```
+
+If the above works, then you have set up your environment correctly and you are good to start using software that other lab members have already installed on the HPC. If you need to install software yourself, continue reading the next section.  
+
+
+## Installing R packages
+
+Your first attempt to install an R package should not require anything different. Simply use `install.packages()` for installing from CRAN or `remotes::install_github()` for installing from GitHub. In a large number of cases, this will work as normal and the package will be installed in the correct location (i.e., `/usr/local/usrapps/doserlab/jwdoser/doserlab/R_packages`). If all dependencies of the package are already installed (or can successfully be installed) then this should work. However, if the package you are trying to install (or a package dependency of your package) requires some external software that is not already existing on the HPC, then you will need to install that software. Read the next section on how to install non-R package software. Once you successfully install that software, re-try your R package installation via the usual approach.  
+
+## Installing other software from source
+
+TBW
+
+
+## Installing other software using `conda`
+
+TBW
+
