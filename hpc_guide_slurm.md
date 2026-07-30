@@ -2,7 +2,7 @@
 
 **Author**: Michelle Pretorius (last edited 30 July 2026)
 
-In this document, I will go over how to use Hazel, NC State's high performance computer (HPC). Note, this guide uses Slurm syntax (Hazel is *slowly* being migrated over to slurm), whereas the previous guide used LSF syntax. Until Hazel has fully migrated, that guide may still be useful. 
+In this document, I will go over how to use Hazel, NC State's high performance computer (HPC). Note, this guide uses Slurm syntax (Hazel is *slowly* being migrated over to Slurm), whereas the previous guide used LSF syntax. Until Hazel has fully migrated, that guide may still be useful. 
 
 ## What is an HPC?
 
@@ -11,14 +11,14 @@ A High-Performance Computing (HPC) system is a network of powerful computers (ca
 ### How does it work?
 
 Think of an HPC like a factory assembly line rather than a single workbench:
-+ **Login nodes**: Where you prepare your work (write scripts, organise files)
++ **Login nodes**: Where you prepare your work (write scripts, organize files)
 + **Compute nodes**: Where the actual heavy computation happens (workhorse)
 + **Job scheduler**: The manager that assigns work to available compute nodes
-+ **Storage systems**: Shared file systems where all nodes can access your data
++ **Storage systems**: Shared filesystems where all nodes can access your data
 
 ### NC State's Cluster
 
-NC State's HPC cluster is officially called Hazel, though you'll also see it referred to as Henry2. Hazel represents the upgraded version of the cluster running modern software (RHEL 9.2 instead of the older CentOS 7.5). Both names refer to the same system, and you'll see both used in documentation (official NC State HPC tutorials) and when acknowledging the cluster in publications. The NC State HPC recently (as of mid-2026) migrated from LSF (Load Sharing Facility) to Slurm as its job scheduler, therefore, it is important to note that some older documentation might still use LSF syntax.
+NC State's HPC cluster is officially called Hazel, though you'll also see it referred to as Henry2. Hazel represents the upgraded version of the cluster running modern software (RHEL 9.2 instead of the older CentOS 7.5). Both names refer to the same system, and you'll see both used in documentation (official NC State HPC tutorials) and when acknowledging the cluster in publications. The NC State HPC recently (as of mid-2026) migrated from LSF (Load Sharing Facility) to Slurm as its job scheduler. Therefore, it is important to note that some older documentation might still use LSF syntax.
 
 > The Office of Information Technology (OIT) at NC State has some great [YouTube tutorials](https://www.youtube.com/@OITHPC) and [general documentation](https://hpc.ncsu.edu/main-slurm.php) on using the HPC, be sure to check them out too!
 
@@ -35,7 +35,7 @@ If you have used the HPC at any stage in your research, you should acknowledge t
 | | Login node | The computer you connect to when you SSH into the HPC (for preparing work only) |
 | | Compute node | Nodes where your actual computations run |
 | | Core/CPU | Individual processing unit within a node (modern nodes have 8–32+ cores) |
-| | GPU | Graphics Processing Unit, specialised for parallel calculations |
+| | GPU | Graphics Processing Unit, specialized for parallel calculations |
 | **Job Scheduling** | Job | Computational task you submit to run on the cluster |
 | | Batch job | Job that runs without user interaction using a script |
 | | Interactive job | Job where you can type commands in real-time |
@@ -48,14 +48,14 @@ If you have used the HPC at any stage in your research, you should acknowledge t
 There are several different places on Hazel that are available for keeping files. These have different amounts of space available and different intended purposes.
 
 ### Home Directory
-When you initially connect to Hazel, your working directory is your home directory `/home/user_name` (or shorthand `~`). **There is a 1GB quota!** Your home directory should be used only for storing scripts, small applications, and temporary files needed by the scheduling system to run your jobs. Your home directory is backed up daily to another data centre.
+When you initially connect to Hazel, your working directory is your home directory `/home/user_name` (or shorthand `~`). **There is a 1GB quota!** Your home directory should be used only for storing scripts, small applications, and temporary files needed by the scheduling system to run your jobs. Your home directory is backed up daily to another data center.
 
 ### Scratch Directory
 There is a 20TB scratch directory quota. The scratch directory is where data for running jobs and results are stored. Your scratch directory is located at `/share/group_name/user_name`. You can find your group name with the command `echo $GROUP`. Jobs should be submitted from `/share` or written in such a way that they by default read/write to `/share`. Any important files should be moved at the end of a run. 
 > Scratch space is not backed up, and files not accessed for 30 days are automatically deleted. 
 
 ### Application Directory
-If you (or your group) are installing your own applications, they should be kept in the application directory (unless they are small enough to fit in your home directory). Each project may request an application directory. As part of of the SEFS Lab, we have a shared directory for commonly used software/packages (`/usr/local/usrapps/doserlab/jwdoser`). This allows us to use software that other members have downloaded, which can save us a lot of time/trouble in the long run. See the `software_on_hpc` document for how to set this up. 
+If you (or your group) are installing your own applications, they should be kept in the application directory (unless they are small enough to fit in your home directory). Each project may request an application directory. As part of the SEFS Lab, we have a shared directory for commonly used software/packages (`/usr/local/usrapps/doserlab/jwdoser`). This allows us to use software that other members have downloaded, which can save us a lot of time/trouble in the long run. See the `software_on_hpc` document for how to set this up. 
 
 ### Research Storage
 
@@ -84,7 +84,7 @@ ssh <user_name>@login.hpc.ncsu.edu          # <user_name> is your NC State Unity
 
 You will then have to supply your password (same as with all UnityID logins), and then you will be asked to complete a Duo two-factor login, which can be done either by receiving a Duo Push (usually option 1) or SMS passcode (option 2). Annoyingly, if you supplied the wrong password, you will only find out *after* the Duo verification, and you will then have to do it all again. 
 
-Once you have successfully logged in, you will see welcome and/or warning messages at the top of the terminal. **Take note of any planned outages that might imapct your work!** At the bottom-left of the screen, you should see that you are no longer logged into your computer but rather logged into a login node part of NC State's Hazel cluster: `[ user_name@loginXX ~ ]`, where XX is the reference ID of the specific login node, and ~ is shorthand for your home directory.
+Once you have successfully logged in, you will see welcome and/or warning messages at the top of the terminal. **Take note of any planned outages that might impact your work!** At the bottom-left of the screen, you should see that you are no longer logged into your computer but rather logged into a login node part of NC State's Hazel cluster: `[ user_name@loginXX ~ ]`, where XX is the reference ID of the specific login node, and ~ is shorthand for your home directory.
 
 > Hazel can only be accessed when connected to university Wi-Fi (eduroam). If you want to access the cluster from home, then a virtual private network (VPN) is required. NC State provides a VPN connection through the [Cisco Secure Client](https://ncsu.service-now.com/sp?id=kb_article_view&sysparm_article=KB0018300) software.
 
@@ -92,7 +92,7 @@ Once you have successfully logged in, you will see welcome and/or warning messag
 
 When you are finished working on Hazel, simply type `exit` in your terminal window and press **Enter** (or press `Ctrl` + `D`). This safely closes your SSH connection and returns you to your local computer's command prompt. The cluster will also automatically log you out after a period of inactivity to free up resources.
 
-## Organising and transferring files
+## Organizing and transferring files
 
 There are a few ways to move files to or from Hazel:
 
@@ -117,19 +117,19 @@ There are a few ways to move files to or from Hazel:
     + **Remote to Local**: To move files the other way, i.e., to move model outputs from the HPC to your local machine to continue analyses, we use the command `get <remote> <local>`.
 
 2. **Web browser**: [Globus](https://app.globus.org) is the preferred tool to use for moving larger files. It can restart interrupted network sessions and compute a checksum at the end of the transfer to ensure the data was moved correctly. The location you are moving data to/from will need to be connected to a Globus Connect Server or have [Globus Personal Connect](https://www.globus.org/globus-connect-personal) installed.
-    + Go to the [Globus web app](https://app.globus.org), look up your organisation (e.g., North Carolina State University). You will once again be prompted to log in with your university credentials and complete a Duo verification. Once completed, you will see a Windows-style web interface.
+    + Go to the [Globus web app](https://app.globus.org), look up your organization (e.g., North Carolina State University). You will once again be prompted to log in with your university credentials and complete a Duo verification. Once completed, you will see a Windows-style web interface.
     + In the collection, search for "NC State Hazel HPC Cluster", and continue with your university credentials or Unity ID. This will open the contents of your home directory once again, i.e., the Path should be `/home/<user_name>/`. If not, you can navigate to your home directory by clicking on select folders.
         + Rename folders/files on the cluster by right-clicking on the folder/file, or by pressing the "**Rename**" button
         + Delete folders/files on the cluster by pressing the "**Delete**" button
         + Upload files from your computer to the cluster by pressing the "**Upload**" button, and then directly selecting files on your local machine.
         + Download files from the cluster by pressing the "**Download**" button, and this will initiate a regular web download into the Downloads folder of your local machine.
-        + Navigate between folders by either editing the path name or by clicking on the different folders.
+        + Navigate between folders by either editing the pathname or by clicking on the different folders.
     + Globus transfers between endpoints:
         1. Under the "**File Manager**" tab, select "**Set two panes**" in the top right corner.
         2. Then, in the second pane, you can search for "NC State Google Drive Connector" in the path search bar. You may need to do some additional authentication. You should see the home directory of your university's Google Drive in the right pane.
             + You can also connect to folders on your local machine by downloading the [Globus Personal Connect](https://www.globus.org/globus-connect-personal) app which will allow Globus to connect to your computer.
             + If downloaded, you will see an icon in the menu bar at the bottom of your screen. You can right-click and select "**Web: Transfer Files**", which will take you straight to the two Globus panes for transferring files. You can then connect the second pane to the HPC by searching for "NC State Hazel HPC Cluster" again.
-        3. In both panes, navigate to where the file/folder that you want to transfer is located, and also the folder/path where you want the file/folder to be transferred to.
+        3. In both panes, navigate to where the file/folder that you want to transfer is located, and the folder/path where you want the file/folder to be transferred to.
         4. Select the "**Start**" button on the pane that contains the file/folder you are transferring. E.g., if you are transferring a file from the HPC, you would press "**Start**" on the panel connected to the HPC. 
         5. This creates a "Transfer Task" which can be monitored in the "Activity" tab to the right. You will also receive an email notification when the task is complete.  
 
@@ -263,7 +263,7 @@ quit
 Save workspace image? [y/n/c]:
 ```
 
-> As part of of the SEFS Lab, we have a shared directory for commonly used software/packages (`/usr/local/usrapps/doserlab/jwdoser`). Installing R packages with a lot of dependencies can very quickly fill up your home directory space. These shared application directories help avoid this! You can check which packages have already been installed typing `ls /usr/local/usrapps/doserlab/jwdoser/R_Packages`. See the `software_on_hpc` document, also available of the SEFS lab GitHub, on how to add this directory. 
+> As part of the SEFS Lab, we have a shared directory for commonly used software/packages (`/usr/local/usrapps/doserlab/jwdoser`). Installing R packages with a lot of dependencies can very quickly fill up your home directory space. These shared application directories help avoid this! You can check which packages have already been installed typing `ls /usr/local/usrapps/doserlab/jwdoser/R_Packages`. See the `software_on_hpc` document, also available of the SEFS lab GitHub, on how to add this directory. 
 
 It is generally recommended that you limit the number of packages in any script run through the HPC, i.e., do your data wrangling on your local machine (using `dplyr`, `sf`, etc.), and then just load your formatted data (`.rda`) to the HPC. 
 
@@ -296,7 +296,7 @@ If you want to make a sub-directory/folder within this scratch directory (which 
 
 ### Step 3. Submit a job
 
-Now, we can submit our job using `sbatch ~<path>/submit.sh`. As our scratch directory has a limited life span, its generally recommended to save your scripts in your home directory (remember, `~` is shorthand for your home directory). If you have saved your scripts in the scratch directory, then remove the ~, but remember, scratch space is not backed up, and files not accessed for 30 days are automatically deleted!
+Now, we can submit our job using `sbatch ~<path>/submit.sh`. As our scratch directory has a limited lifespan, it's generally recommended to save your scripts in your home directory (remember, `~` is shorthand for your home directory). If you have saved your scripts in the scratch directory, then remove the ~, but remember, scratch space is not backed up, and files not accessed for 30 days are automatically deleted!
 
 ```
 sbatch ~<path>/submit.sh
@@ -328,7 +328,7 @@ squeue -u $USER
 | `COMPLETED` | `CD` | Finished successfully (exit code 0) |
 | `FAILED` | `F` | Finished with non-zero exit code |
 | `TIMEOUT` | `TO` | Exceeded time limit |
-| `CANCELLED` | `CA` | Cancelled by user or admin |
+| `CANCELLED` | `CA` | Canceled by user or admin |
 | `NODE_FAIL` | `NF` | Node failure during execution |
 | `OUT_OF_MEMORY` | `OOM` | Exceeded memory limit |
 
@@ -348,9 +348,9 @@ squeue -u $USER -o "%.10i %.9P %.20j %.8u %.2t %.10M %.6D %R"
     123457   compute           preprocess  unityID PD       0:00      1 (Resources)
 ```
 
-The long string after `-o` tells `squeue` exactly what to display for each column and column widths (for easier visualisation). 
+The long string after `-o` tells `squeue` exactly what to display for each column and column widths (for easier visualization). 
 
-We can see our both our jobs are currently pending (`ST` = `PD`). Common pending reasons include:
+We can see both our jobs are currently pending (`ST` = `PD`). Common pending reasons include:
 
 | Reason |	Meaning	| What to do |
 | :--- | :--- | :--- | 
@@ -369,10 +369,10 @@ sjs [JOBID]
     alloc: cpu=12,mem=48000M,node=1,billing=23 
 
     Step             NTasks  AveCPU    %CPU   MaxRSS   %Mem   MaxDiskRead    MaxDiskWrite
-    [JOBID].batch    1       04:55:28  9%     9.24G    20\%   181.72G        235.09G 
+    [JOBID].batch    1       04:55:28  9%     9.24G    20%   181.72G        235.09G 
 ```
 
-Here `%CPU` of 9% means the job is using about 1 of its 12 requested cores. Add `-r` to re-sample and watch what changes, which is how you tell a busy job from a stuck one.
+Here `%CPU` of 9% means the job is using about 1 of its 12 requested cores. Add `-r` to resample and watch what changes, which is how you tell a busy job from a stuck one.
 
 
 ### Step 5. Cancel a job
@@ -384,7 +384,7 @@ Here `%CPU` of 9% means the job is using about 1 of its 12 requested cores. Add 
 
 We can now explore the various outputs from our run:
 
-+ Standard output and job details (`stdout.[JOBID]`), which will include information such as which directory was used, start date/time,  end/terminate date/time, and some resource usage summaries (i.e., CPU time, average memory, etc.)
++ Standard output and job details (`stdout.[JOBID]`), which will include information such as which directory was used, start date/time, end/terminate date/time, and some resource usage summaries (i.e., CPU time, average memory, etc.)
 + Job errors (`stderr.[JOBID]`), which will be empty if everything ran correctly, or will contain error messages which can be used to debug/fix your batch or R script. 
 + Script outputs/products such as `.rda` from a model, etc.
     + Remember, your scratch space is not backed up, and files not accessed for 30 days are automatically deleted. Therefore, it is good practice to download or move outputs to research storage after a successful run.
@@ -412,7 +412,7 @@ Rscript ~/model_script.R ${SLURM_ARRAY_TASK_ID}
 
 You can see a couple of changes to this batch script compared to our basic batch script:
 + `--array=1-3` tells Slurm, "I want three versions of this job, indexed 1, 2, and 3."
-+ `_%A_%a` acts as a placeholder. Slurm swaps it for the index number so your log files stay organized and don’t overwrite each other: `%A` = master array JOBID (e.g., `123456`), `%a` = array task index (e.g., `1`, `2`, or `3`)
++ `_%A_%a` acts as a placeholder. Slurm swaps it for the index number so your logfiles stay organized and don’t overwrite each other: `%A` = master array JOBID (e.g., `123456`), `%a` = array task index (e.g., `1`, `2`, or `3`)
 + `$SLURM_ARRAY_TASK_ID` is an environment variable that Slurm "plugs into" your R command. For the first job, it becomes 1; for the second, 2, and so on.
 
 | Variable | Description | Example Value |
@@ -439,8 +439,8 @@ set.seed(123 + chain_idx)
 
 This allows the script to be "self-aware", i.e., it knows which part of the task it is performing based on what the HPC tells it.
 + `args <- commandArgs(trailingOnly = TRUE)` This captures any text you type after `Rscript model_script.R` in your batch script (i.e., the `$SLURM_ARRAY_TASK_ID` we passed from the batch script.).
-+ `chain_id <- if(length(args) > 0) as.numeric(args[1]) else 1` This is a bit of "safety" code. It grabs the index number from the HPC, but if you're just testing locally, it defaults to 1 so the script doesn't crash.
-+ `set.seed(123 + chain_id)` This is the most important part. By shifting the seed based on the chain ID, you ensure each job explores the posterior from a different starting point, maintaining statistical independence for your Bayesian model.
++ `chain_idx <- if(length(args) > 0) as.numeric(args[1]) else 1` This is a bit of "safety" code. It grabs the index number from the HPC, but if you're just testing locally, it defaults to 1 so the script doesn't crash.
++ `set.seed(123 + chain_idx)` This is the most important part. By shifting the seed based on the chain ID, you ensure each job explores the posterior from a different starting point, maintaining statistical independence for your Bayesian model.
 
 ## Essential commands
 
@@ -455,12 +455,12 @@ This allows the script to be "self-aware", i.e., it knows which part of the task
 | `si --nodes --partition compute` | Show detailed resource availability for given partition |
 |  `sacct -j JOBID` | View completed job details |
 | `salloc` | Start an **interactive session** on a compute node. |
-| `sinfo` | Show all available partitions on the cluster or check which ones you have access to (e.g. `cnr`) |
+| `sinfo` | Show all available partitions on the cluster or check which ones you have access to (e.g., `cnr`) |
 | `srun` | Run parallel tasks |
 | `seff JOBID` | Job efficiency report |
 
 
-### General linux commands
+### General Linux commands
 
 | Command | Description |
 | :--- | :--- |
