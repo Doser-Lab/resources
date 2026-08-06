@@ -1,8 +1,10 @@
 # How to use the NC State High Performance Computer (HPC)
 
-**Author**: Michelle Pretorius (last edited 5 August 2026)
+**Author**: Michelle Pretorius (last edited August 2026)
 
 In this document, I will go over how to use Hazel, NC State's high performance computer (HPC). Note, this guide uses **Slurm** syntax (Hazel is *slowly* migrating from LSF to Slurm). The previous guide (`hpc_guide_lsf.pdf`) uses LSF syntax, therefore, until Hazel has fully migrated, that guide may still be useful. 
+
+> Check out our printable Slurm command cheat sheet too: `hpc_slurm_cheat_sheet.pdf`
 
 ## What is an HPC?
 
