@@ -16,3 +16,7 @@ ENV/
 # OS-specific junk
 .DS_Store
 Thumbs.db
+
+# RStudio projects
+*.Rproj
+.Rproj.user
